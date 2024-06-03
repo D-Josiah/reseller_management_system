@@ -53,7 +53,7 @@ if (isset($_GET['product_id'])) {
                     <!-- Display image preview -->
                     <?php
                     if (!empty($row['image'])) {
-                        echo "<img src='" . htmlspecialchars($row['image']) . "' alt='Product Image' class='product-image'>";
+                        echo "<img src=../uploads/'" . htmlspecialchars($row['image']) . "' alt='Product Image' class='product-image'>";
                     } else {
                         echo "<p>No image available</p>";
                     }

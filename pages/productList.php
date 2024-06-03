@@ -8,11 +8,14 @@
 </head>
 
 <body>
-    <header>
+<header>
         <div class="header-content">
             <img src="../images/admin.png" alt="persons" class="persons">
             <h1>Admin Dashboard</h1>
         </div>
+        <form action="logout.php" method="post" class="logout">
+                <input type="submit" value="LOGOUT">
+        </form>
     </header>
     <nav>
         <ul>
