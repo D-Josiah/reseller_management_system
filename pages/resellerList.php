@@ -1,5 +1,6 @@
 <?php
 include '../connector.php';
+session_start();
 
 // SQL query to select reseller data and their status
 $sql = "SELECT r.reseller_id, r.name, r.reseller_photo, a.type AS status
@@ -55,9 +56,12 @@ if (!$result) {
 <body>
     <header>
         <div class="header-content">
-        <img src="../images/admin.png" alt="persons" class="persons">
+            <img src="../images/admin.png" alt="persons" class="persons">
             <h1>Admin Dashboard</h1>
         </div>
+        <form action="logout.php" method="post" class="logout">
+                <input type="submit" value="LOGOUT">
+        </form>
     </header>
 
     <nav>
@@ -65,7 +69,9 @@ if (!$result) {
             <li><a href="resellerList.php">Reseller List</a></li>
             <li><a href="productList.php">Product List</a></li>
             <li><a href="orderList.php">Order List</a></li>
+            <li><a href="report.php">Report</a></li>
         </ul>
+
     </nav>
 
     <div class="search-filter-container">
@@ -84,7 +90,8 @@ if (!$result) {
             <?php
             if ($result->num_rows > 0) {
                 while($row = $result->fetch_assoc()) {
-                    echo "<div class='reseller-item'>
+                    echo "<form action='resellerInfo.php' method ='post' class='reseller-item'>
+                        <input type='hidden' name='reseller_id' value='{$row['reseller_id']}'>
                         <div class='reseller-photo'>
                         <img src='../images/reseller_icon.png' alt='Reseller Photo'>
                         </div>
@@ -92,9 +99,9 @@ if (!$result) {
                                 <p><strong>ID:</strong> {$row['reseller_id']}</p>
                                 <p><strong>Name:</strong> {$row['name']}</p>
                                 <p><strong>Status:</strong> {$row['status']}</p>
-                                <a href='resellerInfo.php?reseller_id={$row['reseller_id']}&name={$row['name']}&status={$row['status']}' class='view-details-link'>View Details</a>
+                                <button class='view-details-link' type ='submit'  name='view' value='submit' onclick='window.location.href='resellerInfo.php'> VIEW DETAILS </button>
                             </div>
-                        </div>";
+                        </form>";
                 }
             } else {
                 echo "<p>No resellers found</p>";

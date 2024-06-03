@@ -1,7 +1,7 @@
 <?php
 include '../connector.php';
 session_start();
-echo"$_SESSION[admin_id]";
+
 
 if(isset($_POST["register"])){
     $name = htmlspecialchars($_POST["name"]); 
