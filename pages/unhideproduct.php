@@ -1,5 +1,6 @@
 <?php
 include '../connector.php';
+session_start();
 
 if (isset($_GET['product_id'])) {
     $product_id = intval($_GET['product_id']);

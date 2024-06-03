@@ -1,5 +1,6 @@
 <?php
 include '../connector.php';
+session_start();
 
 // SQL query to select reseller data and their status
 $sql = "SELECT r.reseller_id, r.name, r.reseller_photo, a.type AS status
@@ -68,6 +69,7 @@ if (!$result) {
             <li><a href="resellerList.php">Reseller List</a></li>
             <li><a href="productList.php">Product List</a></li>
             <li><a href="orderList.php">Order List</a></li>
+            <li><a href="report.php">Report</a></li>
         </ul>
 
     </nav>

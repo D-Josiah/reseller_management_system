@@ -48,26 +48,44 @@ if (isset($_POST['save'])) {
     $order_id = $_POST['order_id']; 
     $payment_method = htmlspecialchars($_POST['payment_method']);  
 
-    // Update query to save the changes
-    $update_order_sql = "UPDATE orders o
-                        JOIN reseller r ON o.reseller_id = r.reseller_id
-                        SET 
-                            r.name = '$reseller_name',
-                            o.receiver = '$receiver_name',
-                            o.phone_number = '$receiver_number',
-                            o.delivery_info = '$delivery_info',
-                            o.order_status = '$order_status',
-                            o.date = '$order_date',
-                            o.payment_method = '$payment_method'
-                        WHERE o.order_id = $order_id";
-
-    $result = $conn->query($update_order_sql);
-
-    if ($result) {
-        echo "Order details updated successfully";
+    if ($order_status == 4) {
+        // Delete rows from orders and orderdetails tables where order status is 4
+        $delete_orders_sql = "DELETE FROM orders WHERE order_id = $order_id";
+        $delete_orderdetails_sql = "DELETE FROM order_details WHERE order_id = $order_id";
+    
+    
+        $result_orderdetails = $conn->query($delete_orderdetails_sql);
+        $result_orders = $conn->query($delete_orders_sql);
+       
+    
+        if ($result_orders && $result_orderdetails) {
+            header("Location: ordertList.php");
+        } else {
+            echo "Error deleting order : " . $conn->error;
+        }
     } else {
-        echo "Error updating order details: " . $conn->error;
+        // Update query to save the changes
+        $update_order_sql = "UPDATE orders o
+            JOIN reseller r ON o.reseller_id = r.reseller_id
+            SET 
+                r.name = '$reseller_name',
+                o.receiver = '$receiver_name',
+                o.phone_number = '$receiver_number',
+                o.delivery_info = '$delivery_info',
+                o.order_status = '$order_status',
+                o.date = '$order_date',
+                o.payment_method = '$payment_method'
+            WHERE o.order_id = $order_id";
+    
+        $result = $conn->query($update_order_sql);
+    
+        if ($result) {
+            header("Location: ordertList.php");
+        } else {
+            echo "Error updating order details: " . $conn->error;
+        }
     }
+    
 }    
 ?>
 

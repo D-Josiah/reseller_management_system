@@ -1,5 +1,6 @@
 <?php
 include '../connector.php';
+session_start();
 
 if(isset($_POST["submit"])){
     $product_id = $_POST['product-id'];
@@ -9,27 +10,25 @@ if(isset($_POST["submit"])){
     $price = $_POST['product-price'];
     $stock = $_POST['stock'];
 
-    // If a new image is uploaded, update it
+    // If a new image is uploaded without errors, update it
     if(isset($_FILES["product-photo"]) && $_FILES["product-photo"]["error"] == 0){
         $filename = generateUniqueFilename($_FILES["product-photo"]["name"]);
-        $destination = $filename;
+        $destination = '../uploads/' . $filename;
         
+        // Move image to the new location
         if(move_uploaded_file($_FILES["product-photo"]["tmp_name"], $destination)){
-            $updateSql = "UPDATE product SET name = ?, price = ?, stock = ?, image = ? WHERE product_id = ?";
-            $stmt = $conn->prepare($updateSql);
-            $stmt->bind_param("sdssi", $name, $price, $stock, $filename, $product_id);
+            // Sql to update product
+            $updateSql = "UPDATE product SET name = '$name', price = $price, stock = $stock, image = '$filename' WHERE product_id = $product_id";
         } else {
             echo "Failed to move uploaded file.";
             exit();
         }
     } else {
         // If no new image is uploaded, retain the existing image
-        $updateSql = "UPDATE product SET name = ?, price = ?, stock = ? WHERE product_id = ?";
-        $stmt = $conn->prepare($updateSql);
-        $stmt->bind_param("sdsi", $name, $price, $stock, $product_id);
+        $updateSql = "UPDATE product SET name = '$name', price = $price, stock = $stock WHERE product_id = $product_id";
     }
 
-    if ($stmt->execute()) {
+    if ($conn->query($updateSql) === TRUE) {
         // Redirect back to productList.php
         header("Location: productList.php");
         exit();
@@ -39,6 +38,7 @@ if(isset($_POST["submit"])){
 }
 
 function generateUniqueFilename($filename) {
+    // get path
     $path_parts = pathinfo($filename);
     $extension = isset($path_parts['extension']) ? '.' . $path_parts['extension'] : '';
     $basename = isset($path_parts['filename']) ? $path_parts['filename'] : '';
@@ -46,6 +46,7 @@ function generateUniqueFilename($filename) {
     
     $count = 1;
     $new_filename = $basename . $extension;
+    // If filename alr exits, make a new file
     while (file_exists($dirname . '/' . $new_filename)) {
         $new_filename = $basename . '_' . $count . $extension;
         $count++;

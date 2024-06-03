@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../connector.php';
 
 if (isset($_GET['product_id'])) {

@@ -1,6 +1,7 @@
 <?php
 include '../connector.php';
 
+
 // SQL query to get the top 5 resellers with the highest total amount spent
 $get_top_resellers_sql = "
     SELECT name, total_amount_spent
@@ -10,6 +11,25 @@ $get_top_resellers_sql = "
 
 $result = $conn->query($get_top_resellers_sql);
 
+$get_top_products_sql = "
+    SELECT p.product_id, p.name, od.total_quantity
+    FROM (
+        SELECT product_id, SUM(quantity) AS total_quantity
+        FROM order_details
+        GROUP BY product_id
+        ORDER BY total_quantity DESC
+        LIMIT 5
+    ) AS od
+    JOIN product AS p ON od.product_id = p.product_id";
+
+$product_result = $conn->query($get_top_products_sql);
+
+$get_total_amount_spent_sql = "SELECT SUM(total_amount_spent) AS total_sales FROM reseller";
+
+$sales_result = $conn->query($get_total_amount_spent_sql);
+
+
+
 $conn->close();
 ?>
 
@@ -18,8 +38,9 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel='stylesheet' href='css/report.css'/>
     <link rel='stylesheet' href='css/dashboard.css'/>
+    <link rel='stylesheet' href='css/report.css'/>
+   
     <title>RMS: REPORT</title>
 </head>
 <body>
@@ -27,10 +48,10 @@ $conn->close();
         <div class="header-content">
             <img src="../images/admin.png" alt="persons" class="persons">
             <h3 class="color">Admin Dashboard</h3>
-        </div>
-        <form action="logout.php" method="post" class="logout">
+            <form action="logout.php" method="post" class="logout">
                 <input type="submit" value="LOGOUT">
-        </form>
+            </form>
+        </div>
     </header>
 
     <nav>
@@ -44,10 +65,6 @@ $conn->close();
 
     <main>
         <h1>
-            <?php
-            $current_month = date("F");
-            echo "$current_month";
-            ?>
         </h1>
       
         <div class="top">
@@ -71,13 +88,34 @@ $conn->close();
             </div>
             <div class="product">
                 <h3>TOP PRODUCTS</h3>
-                <!-- Add code here to display top products -->
+                <?php
+                if ($product_result->num_rows > 0) {
+                    echo "<table>";
+                    echo "<tr><th>Product Name</th><th>Order Quantity</th></tr>";
+                    while ($row = $product_result->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>" . htmlspecialchars($row['name']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['total_quantity']) . "</td>";
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                } else {
+                    echo "<p>No products found.</p>";
+                }
+                ?>
             </div>
         </div>
         <div class="bot">
-            <h3>TOTAL RESELLERS:</h3>
-            <h3>TOTAL ORDERS:</h3>
-            <!-- Add code here to display total resellers and total orders -->
+            <?php
+            if ($sales_result->num_rows > 0) { 
+                $row = $sales_result->fetch_assoc();//sales
+                $total_spent = $row['total_sales']; 
+             
+                echo "<h2>TOTAL SALES: P  $total_spent</h2>";
+            } else {
+                echo "No data found.";
+            }
+            ?>
         </div>
     </main>
     <?php include 'footer.php'; ?>

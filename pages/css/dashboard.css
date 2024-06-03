@@ -6,6 +6,7 @@ body {
 main {
   padding: 30px;
   margin-bottom: 10vh;
+  height: 45vh;
 }
 main h2 {
   text-align: center;
@@ -607,7 +608,7 @@ label[for="active_status"] {
   align-self: end;
   background-color: black;
   padding-top: 10px;
-  padding-left: 65%;
+  padding-left: 70%;
 
 }
 

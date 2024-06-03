@@ -68,9 +68,10 @@ if (!$result) {
 
     <nav>
         <ul>
-            <li><a href="resellerList.php">Reseller List</a></li>
+        <li><a href="resellerList.php">Reseller List</a></li>
             <li><a href="productList.php">Product List</a></li>
             <li><a href="orderList.php">Order List</a></li>
+            <li><a href="report.php">Report</a></li>
         </ul>
     </nav>
 
